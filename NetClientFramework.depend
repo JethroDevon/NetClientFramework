@@ -453,13 +453,14 @@
 1450380180 c:\users\jethro\desktop\uni\netclientframework\include\splash.h
 	"Sprites.h"
 
-1450541158 source:c:\users\jethro\desktop\uni\netclientframework\main.cpp
+1450633866 source:c:\users\jethro\desktop\uni\netclientframework\main.cpp
 	<SFML/Graphics.hpp>
 	"sockWrapper.h"
 	"Connection.h"
 	"Splash.h"
 	"Button.h"
 	"Message.h"
+	"textIn.h"
 
 1450541130 source:c:\users\jethro\desktop\uni\netclientframework\src\message.cpp
 	"Message.h"
@@ -469,10 +470,10 @@
 	"Button.h"
 	<string>
 
-1450625922 source:c:\users\jethro\desktop\uni\netclientframework\src\textin.cpp
+1450636946 source:c:\users\jethro\desktop\uni\netclientframework\src\textin.cpp
 	"textIn.h"
 
-1450624554 c:\users\jethro\desktop\uni\netclientframework\include\textin.h
+1450640398 c:\users\jethro\desktop\uni\netclientframework\include\textin.h
 	<SFML/Graphics.hpp>
 	"Button.h"
 	<string>
@@ -486,6 +487,6 @@
 1450459422 c:\users\jethro\desktop\uni\netclientframework\include\button.h
 	"Sprites.h"
 
-1450541205 source:c:\users\jethro\desktop\uni\netclientframework\src\button.cpp
+1450627269 source:c:\users\jethro\desktop\uni\netclientframework\src\button.cpp
 	"Button.h"
 

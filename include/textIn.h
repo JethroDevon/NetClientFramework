@@ -29,8 +29,7 @@ class textIn{
         void setCaret( int, int, int);
         void drawCaret();
 
-        //listens to keypresses when selected, records all
-        //keyboard input
+        //listens to keypresses when selected
         void keyListen(sf::Event &);
 
         //displays the box to draw text in
@@ -50,11 +49,17 @@ class textIn{
         //keeps track of time so as to draw caret blinking on and off
         bool getTicks(double);
 
+        //returns index of text object in text vector that the caret is colliding with
+        int textIndex();
+
         //sets state of boolean 'selected'
         void setSelected(bool);
 
-        //adds a character to the string text
-        void addChar(char);
+        //inserts text in arg2 at index in arg1
+        void insertChar(int, int);
+
+        //adds a character to the string text, takes a unicode integer as args
+        void addChar(int);
 
         //removes last character from the string text unless its empty
         void removeChar();
@@ -73,25 +78,25 @@ class textIn{
 
     private:
 
+        //stores sf::font
+        sf::Font font;
+
         //position object to store mouse position
         sf::Vector2i position;
 
         //this will be the send button
         Button sendButton;
 
-        //this rectangle displays text within it
-        sf::RectangleShape rectangle;
-
-        //there will be two points that will draw a line, this is for drawing the caret to show the
-        //text box is highlighted
-        sf::Vertex caret[];
+        //this rectangle displays text within it, caret will display  the text cursor
+        sf::RectangleShape rectangle, caret;
 
         //this is to store passed time for a timer function to draw the caret blinking
         std::clock_t startTime;
 
         //sendtext is true if there is text to send, selected is true if mouse is over the text box when it clicks
+        //caretX and caretY keep track of where the caret is but do not effect its moving
         bool sendText, selected, withButton;
-        int xpos, ypos, boxWidth, ID;
+        int xpos, ypos, boxWidth, ID, caretX, caretY;
 
         //name for heading of text input box if needed and text to appear in
         //text box automatically

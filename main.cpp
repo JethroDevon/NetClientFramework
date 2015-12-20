@@ -17,7 +17,10 @@ int main(){
 
     splash.returnWindow(800 , 600, "NetClient");
 
-    textIn textField();
+    textIn textField("","",50,50,200,false,window);
+
+    window.setKeyRepeatEnabled	(	false ) 	;
+
 
     //setting frame rate
     window.setFramerateLimit(12);
@@ -27,12 +30,13 @@ int main(){
          sf::Event event;
          while (window.pollEvent(event)){
 
-             if (event.type == sf::Event::Closed || close.getSelected())
+             if (event.type == sf::Event::Closed )
                  window.close();
          }
 
-        window.clear();
-        close.drawMess();
+        window.clear(sf::Color::Green);
+        textField.keyListen(event);
+        textField.drawText();
         window.display();
      }
 }
