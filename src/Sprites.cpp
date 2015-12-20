@@ -11,7 +11,7 @@
                                                                             ///////////////////////////////
                                                                                                        ////
 //constructor                                                                                          ////
-Sprites::Sprites(std::string _path): iLoad("cb.bmp"), path( _path){                                    ////
+Sprites::Sprites(std::string _path): iLoad("media/cb.bmp"), path( _path){                              ////
 
 
 
@@ -24,7 +24,7 @@ Sprites::Sprites(std::string _path): iLoad("cb.bmp"), path( _path){             
 }
 
 //overloaded constructor for contact sheets with multiple frames on them
-Sprites::Sprites(std::string _path, int _rows, int _cols): iLoad("cb.bmp"), path( _path){
+Sprites::Sprites(std::string _path, int _rows, int _cols): iLoad("media/cb.bmp"), path( _path){
 
     rows = _rows;
     cols = _cols;
@@ -131,6 +131,22 @@ sf::Sprite Sprites::getNext(){
     }else{
 
         frame = startFrame;
+        return frames[frame];
+    }
+}
+
+//gets the previous sprite in the frame
+sf::Sprite Sprites::getPrevious(){
+
+
+    //std::cout << "displaying sprite from path- " <<  path << " and frame: "<< frame<< "." << std::endl;
+    if(frame > 0){
+
+        frame--;
+        return frames[frame];
+    }else{
+
+        frame = frames.size();
         return frames[frame];
     }
 }
@@ -275,7 +291,7 @@ void Sprites::loopMode(bool b, int sa, int so){
     }
 }
 
-//sets sprite to show next without calling it
+//sets sprite to show next without returning it
 void Sprites::nextFrame(){
 
 
@@ -286,6 +302,20 @@ void Sprites::nextFrame(){
         }else{
 
             frame = startFrame;
+        }
+}
+
+//sets sprite to show previous without returning it
+void Sprites::previousFrame(){
+
+
+        if(frame > 0){
+
+            frame--;
+
+        }else{
+
+            frame = frames.size();
         }
 }
 

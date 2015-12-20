@@ -58,7 +58,11 @@ class Sprites{
 
         sf::Sprite getNext();
 
+        sf::Sprite getPrevious();
+
         void nextFrame();
+
+        void previousFrame();
 
         void idleFrame();
 

@@ -32,7 +32,7 @@ class Splash: public Sprites{
         void splashKill();
 
         //resets window to set sizes
-        void returnWindow(int, int, std::String);
+        void returnWindow(int, int, std::string);
 
         //object to refere to window passed into args with
         sf::RenderWindow &splashWin;

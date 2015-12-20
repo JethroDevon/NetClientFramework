@@ -57,17 +57,23 @@
 		<Unit filename="include/Connection.h" />
 		<Unit filename="include/Gui.h" />
 		<Unit filename="include/ImageLoader.h" />
+		<Unit filename="include/Message.h" />
 		<Unit filename="include/Splash.h" />
 		<Unit filename="include/Sprites.h" />
 		<Unit filename="include/sockWrapper.h" />
+		<Unit filename="include/textIn.h" />
+		<Unit filename="include/textOut.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Button.cpp" />
 		<Unit filename="src/Connection.cpp" />
 		<Unit filename="src/Gui.cpp" />
 		<Unit filename="src/ImageLoader.cpp" />
+		<Unit filename="src/Message.cpp" />
 		<Unit filename="src/Splash.cpp" />
 		<Unit filename="src/Sprites.cpp" />
 		<Unit filename="src/sockWrapper.cpp" />
+		<Unit filename="src/textIn.cpp" />
+		<Unit filename="src/textOut.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
