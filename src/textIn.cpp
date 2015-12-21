@@ -75,6 +75,7 @@ bool textIn::mouseOver(){
     //get mouse position
     position = sf::Mouse::getPosition(rw);
 
+    //collisions with the mouse in the rectangle
     if(position.x > getXpos() && position.x < getXpos() + getWidth() &&  position.y > getYpos() && position.y < getYpos() + 50){
 
         return true;
@@ -90,6 +91,7 @@ void textIn::mouseListen(){
     // left mouse button is pressed and mouse is over button
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && mouseOver()){
 
+        //if mouse is over the rectangle when clicked selected is set to true
         if(!selected){
 
             setSelected(true);
@@ -105,23 +107,52 @@ void textIn::keyListen(sf::Event &event){
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
 
-        setCaret(text.end()[textIndex()].getPosition().x - 10, ypos, 30);
+        setCaret(text.at(textIndex()).getPosition().x - 1, ypos, 30);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
 
-        setCaret(text.end()[textIndex()].getPosition().x + 10, ypos, 30);
+         setCaret(text.at(textIndex()).getPosition().x + text.at(textIndex()).getLocalBounds().width, ypos, 30);
     }
 
     //this is not key pressed event at all this is textEntered its entirely different
     if (event.type == sf::Event::TextEntered){
 
-        if(event.text.unicode == 8){
+        if (event.text.unicode < 128){
 
-                removeChar();
+            //check if key pressed is the same as the last one
+            if(lastKey == event.text.unicode ){
 
-        }else if (event.text.unicode < 128){
+                //if .6 of a second has passed
+                if(getTicks(0.6)){
 
-            addChar(event.text.unicode);
+                    //add or insert a character
+                    if(textIndex() == (text.size() -1) ){
+
+                        addChar(event.text.unicode);
+                    }else{
+
+                        text.erase(text.begin() + textIndex()-1);
+                    };
+                }
+            }if( 8 == event.text.unicode){
+
+                    //remove a char at end of string or remove a char in middle
+                    if(textIndex() == (text.size() -1) ){
+
+                        removeChar();
+                    }else{
+
+                        removeChar(textIndex());
+                    };
+            }else if(textIndex() == (text.size() -1) ){
+
+                addChar(event.text.unicode);
+                lastKey = event.text.unicode;
+            }else{
+
+                insertChar(textIndex(), event.text.unicode);
+                lastKey = event.text.unicode;
+            }
         }
     }
 }
@@ -169,30 +200,34 @@ void textIn::insertChar( int _i, int _c){
     //no point inserting text if there's no text
     if(text.size() > 2){
 
+        //creates an iterator for text vector assigned from arg 1
+        auto it = text.begin();
+
         //creates a text graphic assigns a font and colour and size and pushes it to back of text vector
         sf::Text temp;
         temp.setFont(font);
-        temp.setString( static_cast<char>(_c));
         temp.setColor(sf::Color::Black);
-        temp.setCharacterSize(25);
-        text.begin()[_i];
+        temp.setCharacterSize(23);
 
         //if char to insert is pesky spacebar character...
         if(_c == 32){
 
             //...then replace it with an underscore
-            text.at(_i).setString("_");
+            temp.setString("_");
+        }else{
+
+            temp.setString( static_cast<char>(_c));
         }
 
-        //loops for each text object in vector after _i
-        for(int c = _i; c < text.size(); c++ ){
+        //insert the text in the vector at index using the iterator
+        text.insert(it + _i, temp);
+        text.at(_i).setPosition((text.at(_i -1).getPosition().x + text.at(_i -1).getLocalBounds().width) , ypos);
 
-            //shifts each caharacter along by 1
-            text.at(c).setPosition(text.at(c - 2).getPosition().x + text.at(c - 2).getLocalBounds().width , ypos);
+        //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
+        for(int x = _i; x < text.size(); x++){
+
+            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , ypos);
         }
-
-        //moves caret across
-        setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, ypos, 30);
     }
 }
 
@@ -226,6 +261,7 @@ void textIn::addChar(int _c){
     setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, ypos, 30);
 }
 
+//removes last character
 void textIn::removeChar(){
 
     if(text.size() > 0){
@@ -238,6 +274,18 @@ void textIn::removeChar(){
 
         //if the text array is empty then return the caret to start
         setCaret( xpos + 5, ypos, 30);
+    }
+}
+
+//removes char from position in args and changes subsequent objects to be drawn properly
+void textIn::removeChar(int _i){
+
+    text.erase(text.begin() + _i);
+
+    //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
+    for(int x = _i; x < text.size(); x++){
+
+        text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , ypos);
     }
 }
 
@@ -264,17 +312,20 @@ std::string textIn::getText(){
 //this function returns the index number of the text sf::object the caret is colliding with
 int textIn::textIndex(){
 
-    for(int c = 0; c < text.size(); c++){
+    if( text.size() > 1){
 
-        if(caretX -5 > text.at(c).getPosition().x && caretX -4 < text.at(c).getPosition().x + text.at(c).getLocalBounds().width &&
-           caretY > text.at(c).getPosition().y && caretY < text.at(c).getPosition().y + text.at(c).getLocalBounds().height){
+        for(int c = 0; c < text.size(); c++){
 
-            return c-1;
+            if(caretX +1 > text.at(c).getPosition().x && caretX  < text.at(c).getPosition().x + text.at(c).getLocalBounds().width &&
+               caretY +1 > text.at(c).getPosition().y && caretY < text.at(c).getPosition().y + text.at(c).getLocalBounds().height){
+
+                return c;
+            }
         }
     }
 
-    //else return error code
-    return -1;
+    //else return second to last
+    return text.size()-1;
 }
 
 //sets state of boolean 'selected'

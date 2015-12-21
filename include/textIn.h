@@ -44,6 +44,7 @@ class textIn{
         //returns true if mouse is over text box when function is called
         bool mouseOver();
 
+        //listens for mouse click over the rectangle
         void mouseListen();
 
         //keeps track of time so as to draw caret blinking on and off
@@ -63,6 +64,9 @@ class textIn{
 
         //removes last character from the string text unless its empty
         void removeChar();
+
+        //removes a sf::Text obecect from vector text at the index num in args
+        void removeChar(int);
 
         //gets or returns the string 'text'
         std::string getText();
@@ -97,6 +101,10 @@ class textIn{
         //caretX and caretY keep track of where the caret is but do not effect its moving
         bool sendText, selected, withButton;
         int xpos, ypos, boxWidth, ID, caretX, caretY;
+
+        //lastKey remembers the last key code hit and calls the ticks function, this way the user doesn't
+        //stream characters out when they just want one
+        int lastKey;
 
         //name for heading of text input box if needed and text to appear in
         //text box automatically
