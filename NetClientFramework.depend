@@ -431,10 +431,10 @@
 	"sockWrapper.h"
 	<iostream>
 
-1450564836 source:c:\users\jethro\desktop\uni\netclientframework\src\sprites.cpp
+1450822044 source:c:\users\jethro\desktop\uni\netclientframework\src\sprites.cpp
 	"Sprites.h"
 
-1450451850 c:\users\jethro\desktop\uni\netclientframework\include\sprites.h
+1450821563 c:\users\jethro\desktop\uni\netclientframework\include\sprites.h
 	<SFML/Graphics.hpp>
 	<string>
 	<iostream>
@@ -447,13 +447,13 @@
 
 1450379612 c:\users\jethro\desktop\uni\netclientframework\include\gui.h
 
-1450290235 source:c:\users\jethro\desktop\uni\netclientframework\src\splash.cpp
+1450816576 source:c:\users\jethro\desktop\uni\netclientframework\src\splash.cpp
 	"Splash.h"
 
-1450380180 c:\users\jethro\desktop\uni\netclientframework\include\splash.h
+1450817776 c:\users\jethro\desktop\uni\netclientframework\include\splash.h
 	"Sprites.h"
 
-1450633866 source:c:\users\jethro\desktop\uni\netclientframework\main.cpp
+1450822457 source:c:\users\jethro\desktop\uni\netclientframework\main.cpp
 	<SFML/Graphics.hpp>
 	"sockWrapper.h"
 	"Connection.h"
@@ -462,31 +462,32 @@
 	"Message.h"
 	"textIn.h"
 
-1450541130 source:c:\users\jethro\desktop\uni\netclientframework\src\message.cpp
+1450816708 source:c:\users\jethro\desktop\uni\netclientframework\src\message.cpp
 	"Message.h"
 
-1450561530 c:\users\jethro\desktop\uni\netclientframework\include\message.h
+1450816689 c:\users\jethro\desktop\uni\netclientframework\include\message.h
 	<SFML/Graphics.hpp>
 	"Button.h"
 	<string>
 
-1450735579 source:c:\users\jethro\desktop\uni\netclientframework\src\textin.cpp
+1450823269 source:c:\users\jethro\desktop\uni\netclientframework\src\textin.cpp
 	"textIn.h"
 
-1450735692 c:\users\jethro\desktop\uni\netclientframework\include\textin.h
+1450822515 c:\users\jethro\desktop\uni\netclientframework\include\textin.h
 	<SFML/Graphics.hpp>
 	"Button.h"
 	<string>
 	<vector>
+	"Sprites.h"
 
 1450380724 source:c:\users\jethro\desktop\uni\netclientframework\src\textout.cpp
 	"textOut.h"
 
 1450380710 c:\users\jethro\desktop\uni\netclientframework\include\textout.h
 
-1450459422 c:\users\jethro\desktop\uni\netclientframework\include\button.h
+1450816330 c:\users\jethro\desktop\uni\netclientframework\include\button.h
 	"Sprites.h"
 
-1450627269 source:c:\users\jethro\desktop\uni\netclientframework\src\button.cpp
+1450818820 source:c:\users\jethro\desktop\uni\netclientframework\src\button.cpp
 	"Button.h"
 

@@ -5,7 +5,7 @@
 
 //constructor for an options message box takes true in last arg for a standard dialogue message box, okay sets selected to true and closes the box, cancel
 //lets bool selected remain false and closes the box, read is set to true on both, button objects are default constructed based on position of method box
-Message::Message(sf::RenderWindow &_rw, int _x, int _y, std::string _text, bool _t):rw(_rw), xpos( _x), ypos(_y),  message(_text), okay( _x + 50, _y + 90, 70, 40, "Okay", rw), cancel( _x + 130 , _y + 90, 70, 40, "Cancel", rw){
+Message::Message(sf::RenderWindow &_rw, int _x, int _y, std::string _text, bool _t): rw(_rw), xpos( _x), ypos(_y),  message(_text), okay( _x + 50, _y + 90, 70, 40, "Okay", _rw), cancel( _x + 130 , _y + 90, 70, 40, "Cancel", _rw){
 
     isOptions = _t;
      if (!font.loadFromFile("media/OpenSans-Bold.ttf")){

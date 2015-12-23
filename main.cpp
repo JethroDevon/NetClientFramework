@@ -17,26 +17,28 @@ int main(){
 
     splash.returnWindow(800 , 600, "NetClient");
 
-    textIn textField("","",50,50,200,false,window);
-
-    window.setKeyRepeatEnabled	(	false ) 	;
+    textIn textField( "", "", 50, 50, 200, false, window);
 
 
+    Button b(100,100,75,50,"mow?",window);
     //setting frame rate
     window.setFramerateLimit(12);
 
+    //main window loop is presently for debugging
      while (window.isOpen()){
 
          sf::Event event;
          while (window.pollEvent(event)){
 
-             if (event.type == sf::Event::Closed )
+             if (event.type == sf::Event::Closed ||  b.getSelected())
                  window.close();
          }
 
         window.clear(sf::Color::Green);
-        textField.keyListen(event);
+
         textField.drawText();
+        b.drawBunt();
+        textField.keyListen(event);
         window.display();
      }
 }

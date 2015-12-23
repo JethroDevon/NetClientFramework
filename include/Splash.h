@@ -16,7 +16,7 @@ class Splash: public Sprites{
         Splash(sf::RenderWindow &,std::string, int, int, double);
 
         //this constructor runs the forever looping splash screen that will
-        //run untill splashKill() is called
+        //run until splashKill() is called
         Splash(sf::RenderWindow &,std::string, int, int);
 
         //draws splash screen for as long as args if initialised correctly
@@ -28,7 +28,7 @@ class Splash: public Sprites{
         //returns true while splash is running false when it has stopped
         bool splashAlive();
 
-        //kills everRunnning splash screen
+        //kills ever runnning splash screen
         void splashKill();
 
         //resets window to set sizes

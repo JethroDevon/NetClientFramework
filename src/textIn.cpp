@@ -1,23 +1,23 @@
 #include "textIn.h"
 
-///TO-DO: make sure that nothing is drawn till highlighted, put everything exlude operations as well as drawring caret
+///TO-DO: make sure that nothing is drawn till highlighted, put everything exclude operations as well as drawing caret
 
 //constructor with button object initialised in initialiser list
-textIn::textIn(std::string _name, std::string _initText, int _x, int _y, int _width, bool _withButton, sf::RenderWindow & _rw): name( _name), initText( _initText),
-    xpos( _x), ypos( _y), boxWidth( _width), withButton( _withButton), rw(_rw), sendButton(_x, _y, _width, 40, "Send", rw){
+textIn::textIn(std::string _name, std::string _initText, int _x, int _y, int _width, bool _withButton, sf::RenderWindow &_rw): name( _name), initText( _initText),
+    withButton( _withButton), Sprites(_rw, "media/cb.bmp") {
 
     //selected is default false
-    selected = false;
+    setSelected(false);
 
-    setCaret(xpos, ypos, 30);
+    setXY( _x, _y);
+    setWH(_width, 30);
+
+    setCaret(_x, _y, 30);
 
     if (!font.loadFromFile("media/openSans-Bold.ttf")){
 
         std::cout<<"Error loading font for text field object.";
     }
-
-    //updates time passed since program started
-    startTime = std::clock();
 
     setRects();
 }
@@ -31,7 +31,7 @@ void textIn::setRects(){
     rectangle.setOutlineThickness(1);
 
     //position set to draw
-    rectangle.setPosition(sf::Vector2f(xpos, ypos));
+    rectangle.setPosition(sf::Vector2f(getPosX(), getPosY()));
 
     //size is set to a standard, may add a scrolling
     //text field if text is too big later
@@ -51,7 +51,7 @@ void textIn::setCaret(int _x, int _y, int _length){
 
 void textIn::drawCaret(){
 
-    if(!getTicks(2) && selected){
+    if(!getTicks(2) && getSelected()){
 
         rw.draw(caret);
     }
@@ -63,95 +63,66 @@ std::string textIn::send(){
     return name;
 }
 
-//returns state of boolean 'selected'
-bool textIn::getSelected(){
-
-    return selected;
-}
-
-//if mouse collides with text in box return true else false
-bool textIn::mouseOver(){
-
-    //get mouse position
-    position = sf::Mouse::getPosition(rw);
-
-    //collisions with the mouse in the rectangle
-    if(position.x > getXpos() && position.x < getXpos() + getWidth() &&  position.y > getYpos() && position.y < getYpos() + 50){
-
-        return true;
-    }else{
-
-        return false;
-    }
-}
-
-//listen for clicks if mouse is over
-void textIn::mouseListen(){
-
-    // left mouse button is pressed and mouse is over button
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && mouseOver()){
-
-        //if mouse is over the rectangle when clicked selected is set to true
-        if(!selected){
-
-            setSelected(true);
-        }else{
-
-            setSelected(false);
-        }
-    }
-}
-
  //listens to key presses when selected, records all keyboard input
-void textIn::keyListen(sf::Event &event){
+void textIn::keyListen(sf::Event &e){
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+    //if htere are any text objects to cycle through
+    if(text.size() != 0){
 
-        setCaret(text.at(textIndex()).getPosition().x - 1, ypos, 30);
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
 
-         setCaret(text.at(textIndex()).getPosition().x + text.at(textIndex()).getLocalBounds().width, ypos, 30);
+            setCaret(text.at(textIndex()-1).getPosition().x + text.at(textIndex()).getLocalBounds().width + 1, getPosY(), 30);
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+
+             setCaret(text.at(textIndex()+1).getPosition().x + text.at(textIndex()).getLocalBounds().width + 1, getPosY(), 30);
+        }
     }
 
     //this is not key pressed event at all this is textEntered its entirely different
-    if (event.type == sf::Event::TextEntered){
+    if (e.type == sf::Event::TextEntered){
 
-        if (event.text.unicode < 128){
+        if (e.text.unicode < 128 && getSelected()){
 
-            //check if key pressed is the same as the last one
-            if(lastKey == event.text.unicode ){
+             //if the same key as the last one was pressed not too recently
+            if(lastKey == e.text.unicode ){
 
-                //if .6 of a second has passed
-                if(getTicks(0.6)){
+                //if a second has passed
+                if(getTicks(1)){
 
-                    //add or insert a character
-                    if(textIndex() == (text.size() -1) ){
 
-                        addChar(event.text.unicode);
+                    //if the caret is next to the front most text object append text to the front of the vector else
+                    //insert the character to the point where the caret is colliding
+                    if(text.size() == 0 || caretX > (text.back().getPosition().x + text.back().getLocalBounds().width) - 10){
+
+                        addChar(e.text.unicode);
                     }else{
 
-                        text.erase(text.begin() + textIndex()-1);
-                    };
+                        insertChar( textIndex(), e.text.unicode);
+                    }
                 }
-            }if( 8 == event.text.unicode){
+             //if backspace has been hit
+            }if( 8 == e.text.unicode){
 
-                    //remove a char at end of string or remove a char in middle
-                    if(textIndex() == (text.size() -1) ){
+                    //if the caret is next to the front most text object remove the front most object with remove char
+                    //else remove the character at the point where the caret is colliding
+                    if( text.size() == 0 || caretX > (text.back().getPosition().x + text.back().getLocalBounds().width) - 10){
 
                         removeChar();
                     }else{
 
                         removeChar(textIndex());
                     };
-            }else if(textIndex() == (text.size() -1) ){
+             //if the caret is next to the front most text object append text to the front of the vector else
+            //insert the character to the point where the caret is colliding
+            }else if(text.size() == 0 || caretX > (text.back().getPosition().x + text.back().getLocalBounds().width)  - 10)  {
 
-                addChar(event.text.unicode);
-                lastKey = event.text.unicode;
+                addChar(e.text.unicode);
+                lastKey = e.text.unicode;
             }else{
 
-                insertChar(textIndex(), event.text.unicode);
-                lastKey = event.text.unicode;
+                insertChar(textIndex(), e.text.unicode);
+                lastKey = e.text.unicode;
             }
         }
     }
@@ -166,10 +137,10 @@ void textIn::drawText(){
     //draws background rectangle
     rw.draw(rectangle);
 
-    //loops through each char in the sf::Text array drawring each one
+    //loops through each char in the sf::Text array drawing each one
     for(auto &t: text){
 
-        //deals with difficult spacebar character by ignoring him
+        //deals with difficult space bar character by ignoring him
         if(t.getString() != '_'){
 
             rw.draw(t);
@@ -178,21 +149,6 @@ void textIn::drawText(){
 
     //draws the blinking caret
     drawCaret();
-}
-
-//this function returns true if double in args has passed since hte last time the function was called or the start of the program
-bool textIn::getTicks(double ticksPassed){
-
-    //updates ticks and returns true if time in args has passed
-    if(((std::clock() - startTime) /(double) CLOCKS_PER_SEC) > ticksPassed){
-
-        startTime = std::clock();
-        return true;
-    //returns false if time has not passed
-    }else{
-
-        return false;
-    }
 }
 
 void textIn::insertChar( int _i, int _c){
@@ -207,7 +163,7 @@ void textIn::insertChar( int _i, int _c){
         sf::Text temp;
         temp.setFont(font);
         temp.setColor(sf::Color::Black);
-        temp.setCharacterSize(23);
+        temp.setCharacterSize(25);
 
         //if char to insert is pesky spacebar character...
         if(_c == 32){
@@ -221,12 +177,12 @@ void textIn::insertChar( int _i, int _c){
 
         //insert the text in the vector at index using the iterator
         text.insert(it + _i, temp);
-        text.at(_i).setPosition((text.at(_i -1).getPosition().x + text.at(_i -1).getLocalBounds().width) , ypos);
+        text.at(_i).setPosition((text.at(_i ).getPosition().x + text.at(_i ).getLocalBounds().width) , getPosY());
 
         //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
         for(int x = _i; x < text.size(); x++){
 
-            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , ypos);
+            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY());
         }
     }
 }
@@ -250,15 +206,15 @@ void textIn::addChar(int _c){
     //if it is the first in the array set the position of the first character to be within the start of the text box
     if(text.size() == 1){
 
-        text.at(0).setPosition(xpos, ypos);
+        text.at(0).setPosition(getPosX(), getPosY());
     }else{
 
         //this puts the char in args after the previous char in the array
-        text.back().setPosition(text.end()[-2].getPosition().x + text.end()[-2].getLocalBounds().width , ypos);
+        text.back().setPosition(text.end()[-2].getPosition().x + text.end()[-2].getLocalBounds().width , getPosY());
     }
 
     //moves caret across
-    setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, ypos, 30);
+    setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, getPosY(), 30);
 }
 
 //removes last character
@@ -269,11 +225,11 @@ void textIn::removeChar(){
         text.pop_back();
 
         //moves caret back
-        setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, ypos, 30);
+        setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, getPosY(), 30);
     }else{
 
         //if the text array is empty then return the caret to start
-        setCaret( xpos + 5, ypos, 30);
+        setCaret( getPosX() + 5, getPosY(), 30);
     }
 }
 
@@ -285,11 +241,11 @@ void textIn::removeChar(int _i){
     //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
     for(int x = _i; x < text.size(); x++){
 
-        text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , ypos);
+        text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY());
     }
 }
 
-//gets text from the text graphics vector and deals with space bar
+//gets text from the text graphics vector and returns it as a string also deals with pesky space bar
 std::string textIn::getText(){
 
     std::string temp;
@@ -312,43 +268,22 @@ std::string textIn::getText(){
 //this function returns the index number of the text sf::object the caret is colliding with
 int textIn::textIndex(){
 
-    if( text.size() > 1){
+    if( text.size() >= 1){
 
-        for(int c = 0; c < text.size(); c++){
+        for(int c = 1; c < text.size(); c++){
 
             if(caretX +1 > text.at(c).getPosition().x && caretX  < text.at(c).getPosition().x + text.at(c).getLocalBounds().width &&
                caretY +1 > text.at(c).getPosition().y && caretY < text.at(c).getPosition().y + text.at(c).getLocalBounds().height){
 
-                return c;
+                return c-1;
             }
         }
     }
 
     //else return second to last
-    return text.size()-1;
+    return text.size()-1 ;
 }
 
-//sets state of boolean 'selected'
-void textIn::setSelected(bool _s){
-
-    selected = _s;
-}
-
-//get integer private variables for id number if set and xpos and ypos
-int textIn::getXpos(){
-
-    return xpos;
-}
-
-int textIn::getYpos(){
-
-    return ypos;
-}
-
-int textIn::getWidth(){
-
-    return boxWidth;
-}
 
 int textIn::getID(){
 

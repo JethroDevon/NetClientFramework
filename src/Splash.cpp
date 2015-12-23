@@ -1,7 +1,7 @@
 #include "Splash.h"
 
 //this constructor runs the splash screen for  as many seconds as is passed in the last argument
-Splash::Splash(sf::RenderWindow & _win, std::string _path, int _row, int _col, double _runTime): splashWin(_win), Sprites(_path, _row, _col){
+Splash::Splash(sf::RenderWindow & _win, std::string _path, int _row, int _col, double _runTime): splashWin(_win), Sprites(_win, _path, _row, _col){
 
     splashRunning = true;
 
@@ -22,7 +22,7 @@ Splash::Splash(sf::RenderWindow & _win, std::string _path, int _row, int _col, d
 }
 
 //this constructor is for a splash screen that runs untill it is told to stop
-Splash::Splash(sf::RenderWindow & _win, std::string _path, int _row, int _col): splashWin(_win), Sprites(_path, _row, _col){
+Splash::Splash(sf::RenderWindow & _win, std::string _path, int _row, int _col): splashWin(_win), Sprites(_win, _path, _row, _col){
 
     splashRunning = true;
 

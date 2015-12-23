@@ -16,10 +16,10 @@ class Sprites{
     public:
 
         //constructor
-        Sprites(std::string );
+        Sprites(sf::RenderWindow & rw, std::string );
 
         //overload constructor for frames
-        Sprites(std::string , int , int );
+        Sprites(sf::RenderWindow & rw, std::string , int , int );
 
         //destructor
         ~Sprites();
@@ -37,6 +37,9 @@ class Sprites{
 
         //this vector will store an array of sprites that will each be part of an animation
         std::vector <sf::Sprite> frames;
+
+        //render window reference, this is presently just needed if mouse clicks and position detection is needed
+        sf::RenderWindow & rw;
 
         void loopMode(int, int);
 
@@ -94,7 +97,22 @@ class Sprites{
 
         void destroy();
 
-         //returns true if time in args has passed since last call
+        //returns true if mouse is over the sprite, function is long needed
+        //the mouse needs a reference to window to be passed into args so that
+        //the positions of the mouse are relative to the opened window...it think
+        bool mouseOver();
+
+        //if the mouse is over sprite and the mouse is clicked then
+        //the boolean 'selected' for the sprite will be set to true
+        void mouseListen();
+
+        //returns state of boolean 'selected'
+        bool getSelected();
+
+         //sets state of boolean 'selected'
+        void setSelected(bool);
+
+        //returns true if time in args has passed since last call
         bool getTicks(double);
 
         std::clock_t startTime;
@@ -117,6 +135,9 @@ class Sprites{
         //texture file for initialising sprite with, needed to be public
         sf::Texture tex;
 
+        //position object to store mouse position
+        sf::Vector2i position;
+
     private:
 
         //path string will contain location of image to load on to cntSheet
@@ -125,7 +146,9 @@ class Sprites{
         //dimensions of the sprite or all frames of the sprite as a whole, this is for collisions or movement
         int posX, posY, sWidth, sHeight, storedX ,storedY;
 
-        bool colliding;
+        //colliding if the sprite is colliding with another
+        // selected knows if the Sprite has been selected by a mouse click, default false;
+        bool colliding, selected;
 };
 
 #endif // SPRITE_H

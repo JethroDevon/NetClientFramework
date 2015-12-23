@@ -1,13 +1,12 @@
 #include "Button.h"
 
 //default constructor passes error image path into sprite extension because will not be using images
-Button::Button(int _x, int _y, int _w, int _h, std::string _text, sf::RenderWindow & _rw): text(_text),  rw(_rw), Sprites("media/cb.bmp"){
+Button::Button(int _x, int _y, int _w, int _h, std::string _text, sf::RenderWindow & _rw): text(_text), Sprites(_rw, "media/cb.bmp"){
 
     setXY(_x, _y);
     setWH(_w, _h);
 
-    //default boolean else its hanging
-    selected = false;
+
 
     if (!font.loadFromFile("media/OpenSans-Bold.ttf")){
 
@@ -26,35 +25,13 @@ Button::Button(int _x, int _y, int _w, int _h, std::string _text, sf::RenderWind
 }
 
 //default constructor passes error code image path into sprite extension because will not be using images
-Button::Button(int _x, int _y, int _w, int _h, std::string _text, sf::RenderWindow & _rw, std::string _path): rw(_rw), Sprites(_path){
+Button::Button(int _x, int _y, int _w, int _h, std::string _text, sf::RenderWindow & _rw, std::string _path): Sprites(_rw, _path){
 
     setXY(_x, _y);
     setWH(_w, _h);
 
     //default boolean else its hanging
-    selected = false;
-}
-
-//returns true if function is called and the mouse is within bounds of the object
-bool Button::mouseOver(){
-
-    //get mouse position
-    position = sf::Mouse::getPosition(rw);
-
-    //do collision and return
-    if(position.x > getPosX() && position.x < getPosX() + getWidth() &&  position.y > getPosY() && position.y < getPosY() + getHeight()){
-
-        return true;
-    }else{
-
-        return false;
-    }
-}
-
-//sets selected to true or false
-void Button::setSelected(bool _s){
-
-    selected = _s;
+    setSelected(false);
 }
 
 //gets whether the button is selected
@@ -67,12 +44,6 @@ int Button::getID(){
 void Button::setID(int _id){
 
     id = _id;
-}
-
-//gets whether the button is selected
-bool Button::getSelected(){
-
-    return selected;
 }
 
 //draw the button
@@ -97,7 +68,7 @@ void Button::animateButton(){
     //if not selected increment  current frame by one
     //unless its reached the end of the animation sequence
     //de-increments if selected
-    if(!selected){
+    if(!getSelected()){
 
         if(frame != frames.size())
             nextFrame();
@@ -121,22 +92,6 @@ void Button::setRect(){
 
     //sets text size to be one third of box height
     sftext.setCharacterSize(1+getHeight()/3);
-}
-
-//listen for clicks if mouse is over
-void Button::mouseListen(){
-
-    // left mouse button is pressed and mouse is over button
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && mouseOver()){
-
-        if(!selected){
-
-            setSelected(true);
-        }else{
-
-            setSelected(false);
-        }
-    }
 }
 
 //sets colours for text box, else they are left to default

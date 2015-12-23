@@ -1,51 +1,55 @@
 #include "Sprites.h"
-///must use a static loading class that copies textures instead of loading images lots at start!!!
+///Maybe should take a render window argument so nothing else has own one
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-////            -SPRITES CONSTRUCTORS FOR SINGLE IMAGE SPRITE AND sf::SPRITE LOOP HANDLER-             ////
+////            -SPRITES CONSTRUCTORS FOR SINGLE IMAGE SPRITE AND ANIMATIONS OF SPRITES-               ////
 ////                                                                                                   ////
-////      each time an image is loaded something is output to the console this way     ////////////////////
-// I can gage just how efficient my code is by how many expensive tasks are recorded in the console.  /////
+////                                                                                                   ////
+////                                                                                                   ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                                                            ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
                                                                                                        ////
-//constructor                                                                                          ////
-Sprites::Sprites(std::string _path): iLoad("media/cb.bmp"), path( _path){                              ////
-
-
-
-    //sets sprites in sprite sheet
-    setSprite();
-
-
-    //updates time passed since program started
-    startTime = std::clock();
-}
-
-//overloaded constructor for contact sheets with multiple frames on them
-Sprites::Sprites(std::string _path, int _rows, int _cols): iLoad("media/cb.bmp"), path( _path){
-
-    rows = _rows;
-    cols = _cols;
-
-    //set a starting frame, total frames and call frame array building function
-    frame = 0;
-    startFrame = frame;
-    total_frames = (rows * cols);                                                                   ////
-                                                                                                    ////
-    //breaks down image into frames in vector of sprites                                            ////
-    addFrames();                                                                                    ////
-                                                                                                    ////
-                                                                                                    ////
-    //updates time passed since program started                                                     ////
-    startTime = std::clock();
-
-    //initialises sprite with the first frame so it does not hung around uninitialised
-    sprite = frames[0];                                                                             ////
-}                                                                                                   ////
-                                                                    ////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+//basic constructor has just one image and no animations, sprite will be initialised with a texture    ////
+Sprites::Sprites(sf::RenderWindow & _rw, std::string _path):rw(_rw),iLoad("media/cb.bmp"),path( _path){////
+                                                                                                       ////
+    //sets sprites in sprite sheet                                                                     ////
+    setSprite();                                                                                       ////
+                                                                                                       ////
+    //updates time passed since program started                                                        ////
+    startTime = std::clock();                                                                          ////
+                                                                                                       ////
+    //set clicked to false by default                                                                  ////
+    selected = false;                                                                                  ////
+}                                                                                                      ////
+                                                                                                       ////
+//overloaded constructor for contact sheets with multiple frames on them                               ////
+Sprites::Sprites(sf::RenderWindow & _rw, std::string _path, int _rows, int _cols):rw(_rw),             ////
+iLoad("media/cb.bmp"), path( _path){                                                                   ////
+                                                                                                       ////
+    rows = _rows;                                                                                      ////
+    cols = _cols;                                                                                      ////
+                                                                                                       ////
+    //set a starting frame, total frames and call frame array building function                        ////
+    frame = 0;                                                                                         ////
+    startFrame = frame;                                                                                ////
+    total_frames = (rows * cols);                                                                      ////
+                                                                                                       ////
+    //breaks down image into frames in vector of sprites                                               ////
+    addFrames();                                                                                       ////
+                                                                                                       ////
+                                                                                                       ////
+    //updates time passed since program started                                                        ////
+    startTime = std::clock();                                                                          ////
+                                                                                                       ////
+    //initialises sprite with the first frame so it does not hung around uninitialised                 ////
+    sprite = frames[0];                                                                                ////
+                                                                                                       ////
+    //set clicked to false by default                                                                  ////
+    selected = false;                                                                                  ////
+}                                                                                                      ////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //destructor
@@ -350,6 +354,50 @@ void Sprites::movePos(bool col, int _x, int _y){
         }
         setCollide(false);
     }
+}
+
+//very important mouse over function, returns true if the mouse is over the sprite
+bool Sprites::mouseOver(){
+
+    //get mouse position
+    position = sf::Mouse::getPosition(rw);
+
+    //do collision and return
+    if(position.x > getPosX() && position.x < getPosX() + getWidth() &&  position.y  > getPosY() && position.y < getPosY() + getHeight()){
+
+        return true;
+    }else{
+
+        return false;
+    }
+}
+
+//listen for clicks if mouse is over
+void Sprites::mouseListen(){
+
+    // left mouse button is pressed and mouse is over button
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && mouseOver()){
+
+        if(!selected){
+
+            selected = true;
+        }else{
+
+            selected = false;
+        }
+    }
+}
+
+//returns state of boolean 'selected'
+bool Sprites::getSelected(){
+
+    return selected;
+}
+
+//sets selected to true or false
+void Sprites::setSelected(bool _b){
+
+    selected = _b;
 }
 
 int Sprites::getStoredX(){
