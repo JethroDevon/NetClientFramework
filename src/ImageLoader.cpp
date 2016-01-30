@@ -2,6 +2,7 @@
 
 //the only constructor simply assigns a pointer to an image with an image in order to
 //return an error, pointer is destroyed in vector
+//image loader uses a <string, image> map where imagemap<first = string, second = image>
 ImageLoader::ImageLoader(std::string _path): errorImage(image){
 
 
@@ -29,24 +30,22 @@ ImageLoader::~ImageLoader(){
 
 
 
-
-
-
-
  //if image at _path in args is found in directory but not within the  map
  //this function still returns a pointer to that image and then adds it to the map
  //if the path could not load an error image initialised in args is returned instead
 sf::Image & ImageLoader::getImage(std::string _path){
 
+    //for each image if _path string matches key of imagemap,
     for (  auto & img : imageMap ) {
 
         if(img.first == _path){
 
+           //return the image related to it
            return img.second;
         }
     }
 
-    //creating temporary image
+    //creating temporary image to store a new image
     sf::Image image;
 
     //at this point if an image has not been returned then a key value pair is

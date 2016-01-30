@@ -6,8 +6,6 @@
 #include "Message.h"
 #include "textIn.h"
 
-
-
 int main(){
 
     // Create the main window
@@ -17,10 +15,10 @@ int main(){
 
     splash.returnWindow(800 , 600, "NetClient");
 
-    textIn textField( "", "", 50, 50, 200, false, window);
+    textIn textField( "", "", 50, 50, 200, 50, false, window);
 
+    Button b(100,100,75,50,"EXIT!",window);
 
-    Button b(100,100,75,50,"mow?",window);
     //setting frame rate
     window.setFramerateLimit(12);
 
@@ -34,11 +32,11 @@ int main(){
                  window.close();
          }
 
-        window.clear(sf::Color::Green);
+        window.clear();
 
         textField.drawText();
         b.drawBunt();
-        textField.keyListen(event);
         window.display();
+        textField.keyListen(event);
      }
 }

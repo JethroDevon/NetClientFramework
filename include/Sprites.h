@@ -22,7 +22,7 @@ class Sprites{
         Sprites(sf::RenderWindow & rw, std::string , int , int );
 
         //destructor
-        ~Sprites();
+        virtual ~Sprites();
 
         //pointer to self for deep copy of base class
         Sprites *sp_copy;

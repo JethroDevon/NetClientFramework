@@ -1,7 +1,4 @@
 #include "Sprites.h"
-///Maybe should take a render window argument so nothing else has own one
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////            -SPRITES CONSTRUCTORS FOR SINGLE IMAGE SPRITE AND ANIMATIONS OF SPRITES-               ////
 ////                                                                                                   ////
