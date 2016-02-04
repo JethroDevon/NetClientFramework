@@ -8,7 +8,7 @@
 class ImageLoader{
     public:
         ImageLoader(std::string);
-        ~ImageLoader();
+        virtual ~ImageLoader();
 
         //returns a pointer to an image named in args, if path has not been loaded before
         //the image is put on an image vector for future use and a pointer to it is still returned

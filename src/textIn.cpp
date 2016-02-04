@@ -1,14 +1,7 @@
 #include "textIn.h"
 
-///TO-DO: have the font size dictate the size of the text box, have the text box be the total size of the largest font and have them drawn at the bottom.
-///take the corners off the edges or make the border really thin, the background colour light grey by default with functions to change all colours
-///functions to change font with error handling, functions to return a list of available fonts also
-///include a send button with true or false affected, add a reduced constructor with very basic defaults
-
-
 //constructor with button object initialised in initialiser list
-textIn::textIn(std::string _name, std::string _initText, int _x, int _y, int _width, int _height, bool _withButton, sf::RenderWindow &_rw): name( _name), initText( _initText),
-    withButton( _withButton), Sprites(_rw, "media/cb.bmp") {
+textIn::textIn (int _x, int _y, int _width, int _height, sf::RenderWindow &_rw): Sprites( _rw, "media/cb.bmp") {
 
     //selected is default false
     setSelected(false);
@@ -45,6 +38,7 @@ void textIn::setRects(){
     rectangle.setSize(sf::Vector2f(getWidth(), getHeight()));
 }
 
+//updates carets new position based on args
 void textIn::setCaret(int _x, int _y, int _length){
 
     caret.setPosition(sf::Vector2f(_x, _y));
@@ -54,13 +48,27 @@ void textIn::setCaret(int _x, int _y, int _length){
     //updates carets position for collision detection
     caretX = _x;
     caretY = _y;
+
+    //caret two comes into play only when the text is longer than the box
+    //it needs to be initialised with something for good measure
+    caret2.setPosition(sf::Vector2f(getPosX() + getWidth(), _y));
 }
 
+//draws the caret if ticks are true and if the box is selected, ticks creates a blinking caret
 void textIn::drawCaret(){
 
-    if(!getTicks(2) && getSelected()){
+    if(getSelected()){
 
-        rw.draw(caret);
+        if(textboxOverlap() < 0){
+
+            rw.draw(caret);
+        }else{
+
+            caret2.setPosition(sf::Vector2f(caret.getPosition().x - textboxOverlap(), caret.getPosition().y));
+            caret2.setFillColor(sf::Color::Red);
+            caret2.setSize(sf::Vector2f(1,getHeight()));
+            rw.draw(caret2);
+        }
     }
 }
 
@@ -78,8 +86,15 @@ void textIn::keyListen(sf::Event &e){
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&  caretIndex > 0){
 
-             caretIndex--;
-             setCaret(caretPosition.at(caretIndex), getPosY(), getHeight());
+            //this is on the condition that the caret is not moved to the back of the box when it is
+            //writing text that is longer than the box, the user can delete stuff rather than go back
+            //to see what they have written as this kind of input box is very small and needs to be lower in
+            //overhead
+            if(caret2.getPosition().x - 16 > getPosX()){
+
+                caretIndex--;
+                setCaret(caretPosition.at(caretIndex), getPosY(), getHeight());
+            }
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && (caretIndex < caretPosition.size() -1)){
 
@@ -158,7 +173,7 @@ void textIn::caretFront(){
 }
 
 
-//displays the box to draw text in
+//displays the box to draw text in, and the text within it.
 void textIn::drawText(){
 
     //when called listens for mouse changes
@@ -167,13 +182,39 @@ void textIn::drawText(){
     //draws background rectangle
     rw.draw(rectangle);
 
-    //loops through each char in the sf::Text array drawing each one
-    for(auto &t: text){
+    if( textboxOverlap() < 0 ){
 
-        //deals with difficult space bar character by ignoring him
-        if(t.getString() != '_'){
+        //loops through each char in the sf::Text array drawing each one
+        for(auto &t: text){
 
-            rw.draw(t);
+            //deals with difficult space bar character (symbolized with an underscore) by ignoring him
+            if(t.getString() != '_'){
+
+                rw.draw(t);
+            }
+        }
+
+    //moves the last string of characters back by the length of the amount the
+    //character string was overlapped by, also removes the characters equal to the
+    //length that.
+    }else if(textboxOverlap() > 0 && caret2.getPosition().x > getPosX() ){
+
+        //loops through each object on text array
+        for(auto &t: text){
+
+            if(t.getPosition().x > textboxOverlap()){
+
+                sf::Text temptext = t;
+                temptext.setPosition(t.getPosition().x - textboxOverlap() , t.getPosition().y);
+
+                //doesn't draw the characters if they are behind the text box
+                if(temptext.getPosition().x > getPosX()){
+
+                    //removes stand in character for the space
+                    if(temptext.getString() != '_')
+                        rw.draw(temptext);
+                }
+            }
         }
     }
 
@@ -181,6 +222,21 @@ void textIn::drawText(){
     drawCaret();
 }
 
+//this function returns the distance that the string of texts overlaps the text box, if it doesn't it returns the minus
+//distance
+int textIn::textboxOverlap(){
+
+    //if there are actually text objects on the text vector
+    if(text.size() > 0){
+
+        //return overlapped distance
+        return  (text.back().getPosition().x + text.back().getLocalBounds().width) - (getPosX() + getWidth());
+    }else{
+
+        //return the minus value of the whole length of the box as there's no text to check yet
+        return getWidth() * -1;
+    }
+}
 
 //adds a character to the text array
 void textIn::addChar(int _c){
@@ -190,7 +246,7 @@ void textIn::addChar(int _c){
     temp.setFont(font);
     temp.setString( static_cast<char>(_c));
     temp.setColor(sf::Color::Black);
-    temp.setCharacterSize(25);
+    temp.setCharacterSize(getHeight());
     text.push_back(temp);
 
     if(_c == 32){
@@ -201,11 +257,11 @@ void textIn::addChar(int _c){
     //if it is the first in the array set the position of the first character to be within the start of the text box
     if(text.size() == 1){
 
-        text.at(0).setPosition(getPosX(), getPosY());
+        text.at(0).setPosition(getPosX(), getPosY() - (getHeight()/5));
     }else{
 
         //this puts the char in args after the previous char in the array
-        text.back().setPosition(text.end()[-2].getPosition().x + text.end()[-2].getLocalBounds().width , getPosY());
+        text.back().setPosition(text.end()[-2].getPosition().x + text.end()[-2].getLocalBounds().width , getPosY() - (getHeight()/5));
     }
 
     setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, getPosY(), getHeight());
@@ -224,7 +280,7 @@ void textIn::insertChar( int _i, int _c){
     sf::Text temp;
     temp.setFont(font);
     temp.setColor(sf::Color::Black);
-    temp.setCharacterSize(25);
+    temp.setCharacterSize(getHeight());
 
     //if char to insert is pesky spacebar character...
     if(_c == 32){
@@ -240,12 +296,12 @@ void textIn::insertChar( int _i, int _c){
 
         //insert the text in the vector at index using the iterator
         text.insert(it + _i, temp);
-        text.at(_i).setPosition((text.at(_i ).getPosition().x + text.at(_i ).getLocalBounds().width) , getPosY());
+        text.at(_i).setPosition((text.at(_i ).getPosition().x + text.at(_i ).getLocalBounds().width) , getPosY() - (getHeight()/5));
 
         //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
         for(int x = _i; x < text.size(); x++){
 
-            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY());
+            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY() - (getHeight()/5));
         }
     }else{
 
@@ -253,12 +309,12 @@ void textIn::insertChar( int _i, int _c){
         text.insert(it, temp);
 
         //sets position of first character to be at front of text box
-        text.at(0).setPosition(getPosX() , getPosY());
+        text.at(0).setPosition(getPosX() , getPosY() - - (getHeight()/5));
 
          //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
         for(int x = 1; x < text.size(); x++){
 
-            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY());
+            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY() - - (getHeight()/5));
         }
     }
 
@@ -291,7 +347,7 @@ void textIn::removeChar(){
     }else{
 
         //if the text array is empty then return the caret to start
-        setCaret( getPosX() + 1, getPosY(), 30);
+        setCaret( getPosX() + 1, getPosY(), getHeight());
         caretIndex = 0;
     }
 }
@@ -310,7 +366,7 @@ void textIn::removeChar(int _i){
         //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
         for(int x = (_i-1); x < text.size(); x++){
 
-            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY());
+            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) ,  getPosY() - (getHeight()/5));
         }
 
     }else if(_i != 0){
@@ -319,12 +375,12 @@ void textIn::removeChar(int _i){
         text.erase(it);
 
         //set first element to be at the front of the text box
-        text.at(0).setPosition(getPosX() , getPosY());
+        text.at(0).setPosition(getPosX() , getPosY() - (getHeight()/5));
 
          //iterates all text in front of inserted text to be drawn in front of the char before it (shimmies all the other letters along)
         for(int x = 1; x < text.size(); x++){
 
-            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY());
+            text.at(x).setPosition((text.at(x -1).getPosition().x + text.at(x -1).getLocalBounds().width) , getPosY()- (getHeight()/5));
         }
     }
 

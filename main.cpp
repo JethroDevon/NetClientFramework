@@ -15,9 +15,11 @@ int main(){
 
     splash.returnWindow(800 , 600, "NetClient");
 
-    textIn textField( "", "", 50, 50, 200, 50, false, window);
+    textIn textField(  50, 50, 200, 50, window);
 
-    Button b(100,100,75,50,"EXIT!",window);
+    textIn textField2(  50, 150, 300, 10, window);
+
+    Button b(100,400,75,50,"EXIT!",window);
 
     //setting frame rate
     window.setFramerateLimit(12);
@@ -32,11 +34,13 @@ int main(){
                  window.close();
          }
 
-        window.clear();
+        window.clear(sf::Color::White);
 
         textField.drawText();
+        textField2.drawText();
         b.drawBunt();
         window.display();
         textField.keyListen(event);
+        textField2.keyListen(event);
      }
 }

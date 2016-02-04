@@ -6,7 +6,7 @@ class Gui{
     public:
 
         Gui();
-        ~Gui();
+        virtual ~Gui();
 
         //set up a message box with optional buttons
 

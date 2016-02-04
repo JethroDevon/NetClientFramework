@@ -9,12 +9,11 @@
 
 //explanation changed
 class textIn: public Sprites{
+
     public:
 
-        //constructor, arg1; title of text box, arg2; text box initialised with this string, arg3 and arg 4
-        //are xpos and ypos to draw top left of box, arg5 = width of box, arg6 whether or not to include a send button
-        //next to the text input box
-        textIn(std::string, std::string, int, int, int, int, bool, sf::RenderWindow &);
+        //xposition, yposition, width, height and the window to draw the sprite in
+        textIn(int, int, int, int, sf::RenderWindow &);
 
         //returns string to send text on
         std::string send();
@@ -22,7 +21,7 @@ class textIn: public Sprites{
         //displays the box to draw text in
         void drawText();
 
-        //listens to keypresses when selected
+        //listens to key presses when selected
         void keyListen(sf::Event &);
 
     private:
@@ -70,13 +69,17 @@ class textIn: public Sprites{
         sf::Font font;
 
         //this rectangle displays text within it, caret will display  the text cursor
-        sf::RectangleShape rectangle, caret;
+        sf::RectangleShape rectangle, caret, caret2;
 
         //send text is true if there is text to send, selected is true if mouse is over the text box when it clicks
         //caretX and caretY keep track of where the caret is but do not effect its moving, caret Index stores the
         //position on the string to draw the caret
         bool sendText, withButton;
         int  ID, caretX, caretY, caretIndex;
+
+        //this function returns the distance that the string of texts overlaps the text box, if it doesn't it returns the minus
+        //distance
+        int textboxOverlap();
 
         //lastKey remembers the last key code hit and calls the ticks function, this way the user doesn't
         //stream characters out when they just want one
