@@ -264,6 +264,7 @@ void textIn::addChar(int _c){
         text.back().setPosition(text.end()[-2].getPosition().x + text.end()[-2].getLocalBounds().width , getPosY() - (getHeight()/5));
     }
 
+    //moves the caret along one since a caret has been added
     setCaret( text.back().getPosition().x + text.back().getLocalBounds().width, getPosY(), getHeight());
 
     //stores the position of the caret on an array and iterates an iterator for it by one
