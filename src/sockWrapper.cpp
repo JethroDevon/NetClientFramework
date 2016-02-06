@@ -47,10 +47,10 @@ void sockWrapper::recieve(){
     std::size_t received = 0;
     socket.receive(data, sizeof(data), received);
 
-    //if(sizeof(data)< = 1){
+    if(sizeof(data) >= 1){
 
         messageStack.push_back((std::string) data);
-    //}
+    }
 
     //resetting the first char in a char array to null effectively erases it
     data[0] = NULL;

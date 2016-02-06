@@ -27,8 +27,21 @@ class Connection{
         Connection(float);
         virtual ~Connection();
 
+        //send and receive from name of connection in args, second arg in send to is the actual message
         void sendTo(std::string, std::string);
         std::string recieveFrom(std::string);
+
+        //used to poll connections to check if there is data on the stack
+        //if connection with matching name to string in args has data will return true
+        bool dataAvailable(std::string);
+
+             //creates a new socket and connection and passes it to the array handler
+        //overloaded functions are for server then client constructors of sockWrapper
+        //respectively
+        void addSocket(std::string, unsigned short);
+        void addSocket(std::string, std::string, unsigned short);
+
+    private:
 
         //kills connection with same name as args
         void killConnection(std::string);
@@ -42,17 +55,8 @@ class Connection{
         //getter method for ticks, this is to return passed time from last call
         std::clock_t getTicks();
 
-        //creates a new socket and connection and passes it to the array handler
-        //overloaded functions are for server then client constructors of sockWrapper
-        //respectively
-        void addSocket(std::string, unsigned short);
-        void addSocket(std::string, std::string, unsigned short);
-
         //vector to store and handle socketWrapper objects
         std::vector<sockWrapper*> socketConnections;
-
-    private:
-
         //time variable
         std::clock_t ticks;
 

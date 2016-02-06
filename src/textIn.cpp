@@ -1,5 +1,8 @@
 #include "textIn.h"
 
+///TO-DO, have switch to always append newline at end same for carriage return, have functions to change font and colours
+///TO-DO: implement better scrolling so user can go back to what they wrote without deleting
+
 //constructor with button object initialised in initialiser list
 textIn::textIn (int _x, int _y, int _width, int _height, sf::RenderWindow &_rw): Sprites( _rw, "media/cb.bmp") {
 
@@ -415,6 +418,13 @@ std::string textIn::getText(){
         }
     }
 
+    //pulls the caret back
+    caretBack();
+
+    //clears the string afterwards so theres nothing on it anymore!
+    text.clear();
+
+    //returns the string
     return temp;
 }
 

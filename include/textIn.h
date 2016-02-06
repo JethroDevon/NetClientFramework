@@ -24,6 +24,9 @@ class textIn: public Sprites{
         //listens to key presses when selected
         void keyListen(sf::Event &);
 
+        //gets or returns the string 'text'
+        std::string getText();
+
     private:
 
         //prepares elements in the textbox to be drawn in the right places
@@ -47,9 +50,6 @@ class textIn: public Sprites{
 
         //removes a sf::Text obecect from vector text at the index num in args
         void removeChar(int);
-
-        //gets or returns the string 'text'
-        std::string getText();
 
         //get integer private variable for id number
         int getID();

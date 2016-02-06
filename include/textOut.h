@@ -9,7 +9,7 @@ class textOut: public Sprites{
     public:
 
         //constructor has position (x y) and size ( width height), next is render window to draw to
-        textOut(int, int, int, int, sf::RenderWindow &);
+        textOut(int, int, int, int, int, sf::RenderWindow &);
 
         //adds a string to the text array
         void addString(std::string);
@@ -32,6 +32,12 @@ class textOut: public Sprites{
 
         //stores font size
         int fontSize;
+
+        //
+        void setLinePos();
+
+        //pushes text object to front of vector
+        void insertSFText(sf::Text);
 
         //contains an image for each line of text added with 'addString()' or
         //if the '\n' character is encountered a new string is made and added

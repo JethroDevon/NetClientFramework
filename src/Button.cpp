@@ -6,8 +6,6 @@ Button::Button(int _x, int _y, int _w, int _h, std::string _text, sf::RenderWind
     setXY(_x, _y);
     setWH(_w, _h);
 
-
-
     if (!font.loadFromFile("media/OpenSans-Bold.ttf")){
 
          std::cout << "Error loading button font\n" << std::endl;
