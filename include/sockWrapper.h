@@ -4,6 +4,7 @@
 #include <SFML/Network.hpp>
 #include <string>
 #include <vector>
+#include <queue>
 
 /*
 
@@ -60,6 +61,9 @@ class sockWrapper{
         void setToSend(bool);
         bool getToSend();
 
+        //closes socket
+        void closeSocket();
+
         //gets connection name
         std::string getName();
 
@@ -78,8 +82,7 @@ class sockWrapper{
         //if isAlive is ever false once the socket has been connected the socket will close gracefully, toSend is set to true when there is a message to send
         bool isAlive, toSend;
 
-        //will contain each message, longer than 254 will cause an error
-        char data[1024];
+        sf::Packet packet;
 
         //will contain port number
         unsigned short port;
@@ -91,7 +94,7 @@ class sockWrapper{
         sf::TcpSocket socket;
 
         //will store a stack of strings if messages have been received but not processed
-        std::vector<std::string> messageStack;
+        std::queue<std::string> messageStack;
 
         //listens for connection if a server and not a client
         sf::TcpListener listener;

@@ -35,16 +35,16 @@ class Connection{
         //if connection with matching name to string in args has data will return true
         bool dataAvailable(std::string);
 
-             //creates a new socket and connection and passes it to the array handler
+        //creates a new socket and connection and passes it to the array handler
         //overloaded functions are for server then client constructors of sockWrapper
         //respectively
         void addSocket(std::string, unsigned short);
         void addSocket(std::string, std::string, unsigned short);
 
-    private:
-
         //kills connection with same name as args
         void killConnection(std::string);
+
+    private:
 
         //pings a connection and sets pinged timer/flag to true
         void pingConnection();

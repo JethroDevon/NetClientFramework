@@ -1,18 +1,19 @@
 # depslib dependency file v1.0
-1454794809 source:c:\users\jethro\desktop\uni\netclientframework\src\connection.cpp
+1454878206 source:c:\users\jethro\desktop\uni\netclientframework\src\connection.cpp
 	"Connection.h"
 
-1454792808 c:\users\jethro\desktop\uni\netclientframework\include\connection.h
+1454875812 c:\users\jethro\desktop\uni\netclientframework\include\connection.h
 	"sockWrapper.h"
 	<string>
 	<iostream>
 	<vector>
 	<time.h>
 
-1454794171 c:\users\jethro\desktop\uni\netclientframework\include\sockwrapper.h
+1454881065 c:\users\jethro\desktop\uni\netclientframework\include\sockwrapper.h
 	<SFML/Network.hpp>
 	<string>
 	<vector>
+	<queue>
 
 1365237034 c:\program files (x86)\sfml\include\sfml\network.hpp
 	<SFML/System.hpp>
@@ -427,7 +428,7 @@
 	<string>
 	<vector>
 
-1454795494 source:c:\users\jethro\desktop\uni\netclientframework\src\sockwrapper.cpp
+1454883079 source:c:\users\jethro\desktop\uni\netclientframework\src\sockwrapper.cpp
 	"sockWrapper.h"
 	<iostream>
 
@@ -453,7 +454,7 @@
 1454525805 c:\users\jethro\desktop\uni\netclientframework\include\splash.h
 	"Sprites.h"
 
-1454795093 source:c:\users\jethro\desktop\uni\netclientframework\main.cpp
+1454883391 source:c:\users\jethro\desktop\uni\netclientframework\main.cpp
 	<SFML/Graphics.hpp>
 	"sockWrapper.h"
 	"Connection.h"
@@ -481,7 +482,7 @@
 	<vector>
 	"Sprites.h"
 
-1454781841 source:c:\users\jethro\desktop\uni\netclientframework\src\textout.cpp
+1454877335 source:c:\users\jethro\desktop\uni\netclientframework\src\textout.cpp
 	"textOut.h"
 
 1454779676 c:\users\jethro\desktop\uni\netclientframework\include\textout.h

@@ -117,10 +117,10 @@ void textOut::changeFont(std::string _path){
     //sets font from path path else outputs warning to console
     if (!font.loadFromFile(_path)){
 
-        std::cout<<"Likely name of font incorrect";
+        std::cout<<"Likely name of font incorrect"<<std::endl;
     }else{
 
-        std::cout<<"Font loaded successfully";
+        std::cout<<"Font loaded successfully"<<std::endl;
     }
 }
 

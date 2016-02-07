@@ -17,7 +17,7 @@ void Connection::sendTo(std::string _name, std::string _message){
 
     for(auto &socks: socketConnections){
 
-        if(socks->getName() == _name){
+        if(socks->getName().compare( _name) == 0){
 
             //set to send is true, the socket now knows it can post a message as message has been initialised
             socks->setToSend(true);
@@ -31,12 +31,11 @@ void Connection::sendTo(std::string _name, std::string _message){
 //returns the most recently received message in the top of the stack for the connection named as the same as in args
 std::string Connection::recieveFrom(std::string _name){
 
+     for(auto &socks: socketConnections){
 
-     for(auto socks: socketConnections){
+        if(socks->getName().compare( _name) == 0){
 
-        if(socks->getName() == _name){
-
-            if(socks->unreadMessages() > 0){
+            if(socks->unreadMessages() >= 1){
 
                 return socks->getMessage();
             }
@@ -51,9 +50,11 @@ void Connection::killConnection(std::string _name){
 
     for(auto socks: socketConnections){
 
-        if(socks->getName() == _name){
+        if(socks->getName().compare( _name) == 0){
 
             socks->setAlive(false);
+            socks->closeSocket();
+            std::cout<<"\n"<<socks->getName()<<" has been disconnected."<<std::endl;
         }
     }
 }
@@ -64,7 +65,7 @@ bool Connection::dataAvailable(std::string _name){
 
      for(auto socks: socketConnections){
 
-        if(socks->getName() == _name){
+        if(socks->getName().compare( _name) == 0){
 
             if(socks->unreadMessages() > 0){
 

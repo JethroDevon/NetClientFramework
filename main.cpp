@@ -24,13 +24,22 @@ int main(){
     //function in splash can return window to desired size after, should make that auto-matic
     splash.returnWindow(800 , 600, "NetClient");
 
-    textOut textBox(20, 20, 300, 400, 30, window);
+    textOut textBox(20, 20, 600, 400, 10, window);
 
     textIn textField( 20, 460, 300, 30, window);
 
 
     //setting frame rate
     window.setFramerateLimit(12);
+
+       connection.sendTo("irc", "NICK jethro\n");
+          connection.sendTo("irc", "USER jethro 8 *: j h\n");
+          connection.sendTo("irc", "");
+          connection.sendTo("irc", "");
+          connection.sendTo("irc", "");
+             connection.sendTo("irc", "JOIN #plusplus\r\n");
+
+
 
     //main window loop is presently for debugging
      while (window.isOpen()){
@@ -55,6 +64,9 @@ int main(){
                     }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 
                         window.close();
+                    }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)){
+
+                        connection.killConnection("irc");
                     }
 
                     break;
@@ -73,11 +85,11 @@ int main(){
             textBox.addString(connection.recieveFrom("irc"));
         }
 
+
+
         textField.keyListen(event);
 
         //displays everything to draw to the window
         window.display();
-
-
      }
 }

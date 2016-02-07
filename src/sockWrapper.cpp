@@ -6,6 +6,7 @@ sockWrapper::sockWrapper(std::string _serverName, unsigned short _port):  run(&s
 
     isAlive = false;
     toSend = false;
+    socket.setBlocking(false);
 }
 
 //TCP client constructor, first initialiser list arg is directly initialising thread as it cannot have a default constructor
@@ -13,6 +14,7 @@ sockWrapper::sockWrapper(std::string _clientName, std::string _ipAddress, unsign
 
     isAlive = false;
     toSend = false;
+    socket.setBlocking(false);
 }
 
 sockWrapper::~sockWrapper(){
@@ -34,7 +36,7 @@ void sockWrapper::serverListen(unsigned short _port){
     listener.accept(socket);
 
     //outputs new connection address to console
-    std::cout << "New client connected to " << connectionName << socket.getRemoteAddress() << std::endl;
+    std::cout << "New client connected to " << connectionName << " - " <<socket.getRemoteAddress() << std::endl;
 }
 
 void sockWrapper::send( std::string _message){
@@ -44,16 +46,16 @@ void sockWrapper::send( std::string _message){
 
 void sockWrapper::recieve(){
 
+    char data[1000];
     std::size_t received = 0;
-    socket.receive(data, sizeof(data), received);
 
-    if(sizeof(data) >= 1){
+    // TCP socket:
+    if (socket.receive(data, 1000, received) == sf::Socket::Done){
 
-        messageStack.push_back((std::string) data);
+        //messageStack.push(std::string (data));
+        messageStack.push("pissflaps");
+        std::cout<<std::string (data)<<std::endl;
     }
-
-    //resetting the first char in a char array to null effectively erases it
-    data[0] = NULL;
 }
 
 //returns size of message stack
@@ -101,9 +103,12 @@ void sockWrapper::setAlive( bool _a){
 
 std::string sockWrapper::getMessage(){
 
-    std::string temp = messageStack.back();
-    messageStack.pop_back();
-    return  temp;
+    if(!messageStack.empty()){
+
+        std::string temp = messageStack.back();
+        messageStack.pop();
+        return temp;
+    }
 }
 
 void sockWrapper::setPostMessage(std::string _m){
@@ -126,6 +131,11 @@ std::string sockWrapper::postMessage(){
     return message;
 }
 
+void sockWrapper::closeSocket(){
+
+    socket.disconnect();
+}
+
 void sockWrapper::runConnection(){
 
 
@@ -133,16 +143,17 @@ void sockWrapper::runConnection(){
     mutex.lock();
     while(getAlive()){
 
-        recieve();
-
-        if(getToSend())
+        if(getToSend()){
             send(postMessage());
+        }
 
         //sets message back to ""
         message = "";
 
         //sets flag to post something back to false
         toSend = false;
+
+        recieve();
     }
     mutex.unlock();
 }
