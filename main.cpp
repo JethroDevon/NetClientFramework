@@ -9,12 +9,6 @@
 
 int main(){
 
-    //connection object with timeout passed into args
-    Connection connection(1000);
-
-    //add a socket for the connection to handle
-    connection.addSocket("irc", "irc.freenode.net", 6666);
-
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "", false);
 
@@ -24,7 +18,7 @@ int main(){
     //function in splash can return window to desired size after, should make that auto-matic
     splash.returnWindow(800 , 600, "NetClient");
 
-    textOut textBox(20, 20, 600, 400, 10, window);
+    textOut textBox(20, 20, 600, 400, 20, window);
 
     textIn textField( 20, 460, 300, 30, window);
 
@@ -32,12 +26,18 @@ int main(){
     //setting frame rate
     window.setFramerateLimit(12);
 
-       connection.sendTo("irc", "NICK jethro\n");
-          connection.sendTo("irc", "USER jethro 8 *: j h\n");
-          connection.sendTo("irc", "");
-          connection.sendTo("irc", "");
-          connection.sendTo("irc", "");
-             connection.sendTo("irc", "JOIN #plusplus\r\n");
+    //connection object with timeout passed into args
+    Connection connection(1000);
+
+    //add a socket for the connection to handle
+    connection.addSocket("irc", "irc.freenode.net", 6666);
+
+    connection.sendTo("irc", "NICK jethro\r\n");
+    connection.sendTo("irc", "USER jethro 8 *: j h\r\n");
+    connection.sendTo("irc", "");
+    connection.sendTo("irc", "");
+    connection.sendTo("irc", "");
+    //connection.sendTo("irc", "JOIN #plusplus\r\n");
 
 
 
@@ -84,8 +84,6 @@ int main(){
 
             textBox.addString(connection.recieveFrom("irc"));
         }
-
-
 
         textField.keyListen(event);
 

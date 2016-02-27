@@ -1,5 +1,5 @@
 #include "Connection.h"
-///TO-DO            Comment all of this well
+///TO-DO            Comment all of this better
 
 
 Connection::Connection(float _timeOut):timeOut(_timeOut){
@@ -14,8 +14,7 @@ Connection::~Connection(){
 //this function uses the first string args to find the connection to send the message in  string args2
 void Connection::sendTo(std::string _name, std::string _message){
 
-
-    for(auto &socks: socketConnections){
+    for(auto socks: socketConnections){
 
         if(socks->getName().compare( _name) == 0){
 
@@ -31,7 +30,7 @@ void Connection::sendTo(std::string _name, std::string _message){
 //returns the most recently received message in the top of the stack for the connection named as the same as in args
 std::string Connection::recieveFrom(std::string _name){
 
-     for(auto &socks: socketConnections){
+     for(auto socks: socketConnections){
 
         if(socks->getName().compare( _name) == 0){
 

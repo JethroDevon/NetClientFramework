@@ -50,11 +50,12 @@ void sockWrapper::recieve(){
     std::size_t received = 0;
 
     // TCP socket:
-    if (socket.receive(data, 1000, received) == sf::Socket::Done){
+    if (socket.receive(data, 99, received) == sf::Socket::Done){
 
-        //messageStack.push(std::string (data));
-        messageStack.push("pissflaps");
-        std::cout<<std::string (data)<<std::endl;
+        std::string mow = std::string (data);
+
+        messageStack.push(mow);
+        std::cout<< mow << std::endl;
     }
 }
 
@@ -73,11 +74,11 @@ void sockWrapper::connect(){
     //and close this socket
     if(socket.getRemotePort() != 0){
 
-        std::cout << "connection made by " << connectionName <<"."<< std::endl;
+        std::cout << "connection to " << connectionName <<" completed."<< std::endl;
     }else{
 
         setAlive(false);
-         std::cout << "connection by " << connectionName << " failed." << std::endl;
+         std::cout << "connection to " << connectionName << " failed." << std::endl;
     }
 }
 
@@ -138,22 +139,26 @@ void sockWrapper::closeSocket(){
 
 void sockWrapper::runConnection(){
 
-
-    //mutex lock to avoid waste-full spinning
-    mutex.lock();
     while(getAlive()){
 
+        //mutex lock to avoid waste-full spinning
+        mutex.lock();
+
         if(getToSend()){
+
             send(postMessage());
-        }
 
-        //sets message back to ""
-        message = "";
+            messageStack.push(message);
 
-        //sets flag to post something back to false
-        toSend = false;
+            //sets message back to ""
+            message = "";
 
-        recieve();
+            //sets flag to post something back to false
+            toSend = false;
     }
+
+    recieve();
+
     mutex.unlock();
+    }
 }

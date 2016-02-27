@@ -100,8 +100,10 @@ void textOut::drawBox(){
 
             //sets position to draw each sf::text object based on the dimensions
             //of the text box and the position the object is in in the array 'boxText'
-            boxText.at(pos).setPosition(getPosX() + 5, getPosY() + getHeight() -  (getFontSize() * pos));
-            rw.draw( boxText.at(pos));
+            boxText.at(pos).setPosition(getPosX() + 5, getPosY() + getHeight() -  (getFontSize() * (pos + 2)));
+
+            if( boxText.at(pos).getPosition().y > getPosY())
+                rw.draw( boxText.at(pos));
         }
     }
 }
