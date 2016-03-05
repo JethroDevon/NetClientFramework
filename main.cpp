@@ -32,8 +32,8 @@ int main(){
     //add a socket for the connection to handle
     connection.addSocket("irc", "irc.freenode.net", 6666);
 
-    connection.sendTo("irc", "NICK jethro\r\n");
-    connection.sendTo("irc", "USER jethro 8 *: j h\r\n");
+    connection.sendTo("irc", "NICK othername\r\n");
+    connection.sendTo("irc", "USER jesus 8 *: j c\r\n");
     connection.sendTo("irc", "");
     connection.sendTo("irc", "");
     connection.sendTo("irc", "");
@@ -82,7 +82,7 @@ int main(){
 
         if(connection.dataAvailable("irc")){
 
-            textBox.addString(connection.recieveFrom("irc"));
+            textBox.addString(connection.receiveFrom("irc"));
         }
 
         textField.keyListen(event);

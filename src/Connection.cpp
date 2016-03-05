@@ -2,9 +2,9 @@
 ///TO-DO            Comment all of this better
 
 
-Connection::Connection(float _timeOut):timeOut(_timeOut){
+Connection::Connection(float _timeOut): listenThread( &Connection::addServer, this), timeOut(_timeOut) {
 
-
+    listening = true;
 }
 
 Connection::~Connection(){
@@ -14,9 +14,9 @@ Connection::~Connection(){
 //this function uses the first string args to find the connection to send the message in  string args2
 void Connection::sendTo(std::string _name, std::string _message){
 
-    for(auto socks: socketConnections){
+    for(auto &socks: socketConnections){
 
-        if(socks->getName().compare( _name) == 0){
+        if(socks->getName() == _name){
 
             //set to send is true, the socket now knows it can post a message as message has been initialised
             socks->setToSend(true);
@@ -28,13 +28,13 @@ void Connection::sendTo(std::string _name, std::string _message){
 }
 
 //returns the most recently received message in the top of the stack for the connection named as the same as in args
-std::string Connection::recieveFrom(std::string _name){
+std::string Connection::receiveFrom(std::string _name){
 
-     for(auto socks: socketConnections){
+     for(auto &socks: socketConnections){
 
-        if(socks->getName().compare( _name) == 0){
+        if(socks->getName() == _name){
 
-            if(socks->unreadMessages() >= 1){
+            if(socks->unreadMessages() > 0){
 
                 return socks->getMessage();
             }
@@ -47,13 +47,23 @@ std::string Connection::recieveFrom(std::string _name){
 //kills connection with same name as args
 void Connection::killConnection(std::string _name){
 
-    for(auto socks: socketConnections){
+    if(_name.compare("server")){
 
-        if(socks->getName().compare( _name) == 0){
+        //stops loop in thread and halts block mode of socket
+        //this way the connection is closed
+        listening = false;
+        listener.setBlocking(false);
+    }else{
 
-            socks->setAlive(false);
-            socks->closeSocket();
-            std::cout<<"\n"<<socks->getName()<<" has been disconnected."<<std::endl;
+        //esle loops until finds name of socket wrapper
+        for(auto &socks: socketConnections){
+
+            if(socks->getName() == _name){
+
+                socks->setAlive(false);
+                socks->closeSocket();
+                std::cout<<"\n"<<socks->getName()<<" has been disconnected!"<<std::endl;
+            }
         }
     }
 }
@@ -62,11 +72,11 @@ void Connection::killConnection(std::string _name){
 //if connection with matching name to string in args has data will return true
 bool Connection::dataAvailable(std::string _name){
 
-     for(auto socks: socketConnections){
+     for(auto &socks: socketConnections){
 
-        if(socks->getName().compare( _name) == 0){
+        if(socks->getName() == _name){
 
-            if(socks->unreadMessages() > 0){
+            if((socks->messageStack.size()) > 0 ){
 
                 return true;
             }else{
@@ -92,19 +102,42 @@ std::clock_t Connection::getTicks(){
     return ticks;
 }
 
-///TO-DO: errors must be handled well, implement robust strategy
+//sets teh port number to listen for connections on then launches the server in a thread
+void Connection::createServer(unsigned short _port){
 
-//adds server socket in args to vector
-void Connection::addSocket(std::string _name, unsigned short _port){
+    port = _port;
+   
+    if (listener.listen( port) != sf::Socket::Done){
+        
+        std::cout<<" Couldn't bind to the port: " << port << std::endl;
+    }else{
 
-    socketConnections.push_back(new sockWrapper(_name, _port));
-
-    socketConnections.back()->setAlive(true);
-
-    socketConnections.back()->connect();
-
-    socketConnections.back()->run.launch();
+        std::cout<<"Launching server."<< std::endl;
+        listenThread.launch();
+    }
 }
+
+//must be called in a thread
+void Connection::addServer(){
+
+    //constantly listening for a new connection
+    while(listening){
+
+        //new socket wrapper object to add to array of connections
+        socketConnections.push_back(new sockWrapper( "server", "127.0.0.1",  port));
+
+        //blocks untilll connection is made
+        if (listener.accept( socketConnections.back()->socket) == sf::Socket::Done){
+        
+            std::cout <<" connection made to server."<< std::endl;
+            std::cout<< "Total connections: " << socketConnections.size() << std::endl;
+            socketConnections.back()->send("Connected.");
+            socketConnections.back()->setAlive(true);
+            socketConnections.back()->runThread();
+        }
+    }
+}
+
 
 //adds client socket in args to vector
 void Connection::addSocket(std::string _name, std::string _ip, unsigned short _port){
@@ -112,14 +145,10 @@ void Connection::addSocket(std::string _name, std::string _ip, unsigned short _p
     //adds a new socket to the socket array list with arguments
     socketConnections.push_back(new sockWrapper(_name, _ip,  _port));
 
-    //activate the socket
-    socketConnections.back()->setAlive(true);
-
     //connect the socket to the server
     socketConnections.back()->connect();
-
-    //run the socket in its own thread
-    socketConnections.back()->run.launch();
 }
+
+
 
 
