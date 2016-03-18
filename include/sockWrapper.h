@@ -41,7 +41,7 @@ class sockWrapper{
         //connect send and receive functions
         void send(std::string);
         void receive();
-        void connect();
+        bool connect();
 
         //set and get port and IP
         unsigned short getPort();

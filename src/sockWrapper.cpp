@@ -6,7 +6,7 @@ sockWrapper::sockWrapper(std::string _clientName, std::string _ipAddress, unsign
 
     isAlive = false;
     toSend = false;
-    socket.setBlocking(true);
+    socket.setBlocking(false);
 }
 
 sockWrapper::~sockWrapper(){
@@ -20,40 +20,22 @@ std::string sockWrapper::getName(){
 
 void sockWrapper::send( std::string _message){
 
-
-    //protect thread from using stack at wrong time
-    mutex.lock();
     _message += '\0';
     const char* toSend = _message.c_str();
     socket.send( toSend, strlen(toSend));
-
-    //free mutex
-    mutex.unlock();
 }
 
 void sockWrapper::receive(){
 
-    //protect thread from calling receive function at same time
-    mutex.lock();
-
-    char data[8000];
-    std::size_t received;
+    std::vector<char> buffer(2000);
+    std::size_t received = 0;
 
     // TCP socket:
-    if(socket.receive(data, sizeof(data), received) != sf::Socket::Done){
+    if(socket.receive(buffer.data(), buffer.size(), received) == sf::Socket::Done) {
 
-         
-    }else{
-
-        std::string temp;
-        temp = ((std::string) data).substr( 0, received -1);
-            
-        messageStack.push_back(temp);
-        std::cout<< temp << std::endl;
+        std::string str(buffer.data(), 0, received);
+        messageStack.push_back(str);
     }
-
-    //free up the mutex
-    mutex.unlock();
 }
 
 //returns size of message stack
@@ -62,7 +44,7 @@ int sockWrapper::unreadMessages(){
     return messageStack.size();
 }
 
-void sockWrapper::connect(){
+bool sockWrapper::connect(){
 
     //connect to server
     socket.connect(getIP(), getPort());
@@ -74,10 +56,12 @@ void sockWrapper::connect(){
         setAlive(true);
         run.launch();
         std::cout << "connection to " << connectionName <<" completed."<< std::endl;
+        return true;
     }else{
 
         setAlive(false);
         std::cout << "connection to " << connectionName << " failed." << std::endl;
+        return false;
     }
 }
 
@@ -104,7 +88,7 @@ void sockWrapper::setAlive( bool _a){
 //returns last message in stack to application while guarding process with mutex locks
 std::string sockWrapper::getMessage(){
 
-    std::string temp; 
+    std::string temp;
 
     //mutex avoids change in size of stack while runConnection i
     mutex.lock();
@@ -114,7 +98,7 @@ std::string sockWrapper::getMessage(){
         temp = messageStack.back();
         messageStack.pop_back();
         mutex.unlock();
-
+        //std::cout<< temp <<std::endl;
         return temp;
     }
 
@@ -159,8 +143,14 @@ void sockWrapper::runConnection(){
 
         if(getToSend()){
 
+            //protect thread from using stack at wrong time
+            mutex.lock();
             send(postMessage());
-            messageStack.push_back( getName() + ": " + message);
+
+            messageStack.push_back( message + "\n");
+
+            //free mutex
+            mutex.unlock();
 
             //sets message back to ""
             message = "";
@@ -169,10 +159,15 @@ void sockWrapper::runConnection(){
             setToSend(false);
         }
 
-
         sf::sleep(sf::milliseconds(10));
 
+        //protect receive functions
+        mutex.lock();
+
+        //launches thread of thread for one run, this is normally for if socket is blocking
         receiveThread.launch();
+
+        //free up lock again
+        mutex.unlock();
     }
 }
- 
